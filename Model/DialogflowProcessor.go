@@ -15,39 +15,42 @@ import (
 type DialogflowProcessor struct {
 	projectID        string
 	authJSONFilePath string
-	lang             string
+	language         string
 	timeZone         string
 	sessionClient    *dialogflow.SessionsClient
-	ctx              context.Context
+	context          context.Context
 }
 
-func (dp *DialogflowProcessor) Init(a ...string) (err error) {
-	dp.projectID = a[0]
-	dp.authJSONFilePath = a[1]
-	dp.lang = a[2]
-	dp.timeZone = a[3]
+func (dp *DialogflowProcessor) Init(input ...string) (err error) {
+	dp.projectID = input[0]
+	dp.authJSONFilePath = input[1]
+	dp.language = input[2]
+	dp.timeZone = input[3]
+	dp.context = context.Background()
 
-	// Auth process: https://dialogflow.com/docs/reference/v2-auth-setup
-
-	dp.ctx = context.Background()
-	sessionClient, err := dialogflow.NewSessionsClient(dp.ctx, option.WithCredentialsFile(dp.authJSONFilePath))
+	// Creation of session with credentials to DialogFlow
+	sessionClient, err := dialogflow.NewSessionsClient(dp.context, option.WithCredentialsFile(dp.authJSONFilePath))
 	if err != nil {
-		log.Fatal("Error in auth with Dialogflow")
+		log.Fatal("Auth error with Dialogflow")
 	}
 	dp.sessionClient = sessionClient
 
+	// Returning the object (DialogFlowProcessor) itself
 	return
 }
 
-func (dp *DialogflowProcessor) ProcessNLP(rawMessage string, username string) (r NLPResponse) {
+func (dp *DialogflowProcessor) ProcessNLP(rawMessage string, username string) (nlpResponse NLPResponse) {
+	// The sessionID is the username of our client
 	sessionID := username
+
+	// Request for each session
 	request := dialogflowpb.DetectIntentRequest{
 		Session: fmt.Sprintf("projects/%s/agent/sessions/%s", dp.projectID, sessionID),
 		QueryInput: &dialogflowpb.QueryInput{
 			Input: &dialogflowpb.QueryInput_Text{
 				Text: &dialogflowpb.TextInput{
 					Text:         rawMessage,
-					LanguageCode: dp.lang,
+					LanguageCode: dp.language,
 				},
 			},
 		},
@@ -55,29 +58,41 @@ func (dp *DialogflowProcessor) ProcessNLP(rawMessage string, username string) (r
 			TimeZone: dp.timeZone,
 		},
 	}
-	response, err := dp.sessionClient.DetectIntent(dp.ctx, &request)
+
+	// Receive DialogFlowResponse
+	response, err := dp.sessionClient.DetectIntent(dp.context, &request)
 	if err != nil {
 		log.Fatalf("Error in communication with Dialogflow %s", err.Error())
 		return
 	}
 	queryResult := response.GetQueryResult()
+
+	// Save on response the Intent, Confidence of our response and response message
 	if queryResult.Intent != nil {
-		r.Intent = queryResult.Intent.DisplayName
-		r.Confidence = float32(queryResult.IntentDetectionConfidence)
+		nlpResponse.Intent = queryResult.Intent.DisplayName
+		nlpResponse.Confidence = float32(queryResult.IntentDetectionConfidence)
+		nlpResponse.ResponseMessage = queryResult.FulfillmentText
 	}
-	r.Entities = make(map[string]string)
+
+	// Mapping the entities that DialogFlow detected, if any
+	nlpResponse.Entities = make(map[string]string)
 	params := queryResult.Parameters.GetFields()
 	if len(params) > 0 {
 		for paramName, p := range params {
 			fmt.Printf("Param %s: %s (%s)", paramName, p.GetStringValue(), p.String())
-			extractedValue := extractDialogflowEntities(p)
-			r.Entities[paramName] = extractedValue
+			extractedValue := extractDialogFlowEntities(p)
+			nlpResponse.Entities[paramName] = extractedValue
 		}
 	}
+
+	// Returning the object (DialogFlowProcessor) itself
 	return
 }
 
-func extractDialogflowEntities(p *structpb.Value) (extractedEntity string) {
+func extractDialogFlowEntities(p *structpb.Value) (extractedEntity string) {
+	//Function to extract the entities retrieved by DialogFlow
+	// Next, we define the different types that we are supporting
+
 	kind := p.GetKind()
 	switch kind.(type) {
 	case *structpb.Value_StringValue:
@@ -108,7 +123,7 @@ func extractDialogflowEntities(p *structpb.Value) (extractedEntity string) {
 		if len(list.GetValues()) > 1 {
 			// @TODO: Extract more values
 		}
-		extractedEntity = extractDialogflowEntities(list.GetValues()[0])
+		extractedEntity = extractDialogFlowEntities(list.GetValues()[0])
 		return extractedEntity
 	default:
 		return ""
