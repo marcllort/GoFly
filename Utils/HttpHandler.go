@@ -16,12 +16,12 @@ func InitDialogFlow() {
 	dp.Init("flightbot-9a1fc", "credentials.json", "en", "Europe/Madrid")
 }
 
-func RequestHandler(writer http.ResponseWriter, request *http.Request) {
+func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 	if request.Method == "POST" {
 		//POST will receive a JSON, and return the response (as JSON)
 		body, err := ioutil.ReadAll(request.Body)
 		if err != nil {
-			http.Error(writer, "Error reading request body",
+			http.Error(writter, "Error reading request body",
 				http.StatusInternalServerError)
 		}
 
@@ -40,8 +40,8 @@ func RequestHandler(writer http.ResponseWriter, request *http.Request) {
 		Log(l, response)
 
 		// Prepare the JSON to return
-		writer.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(writer).Encode(response)
-		// When code reaches here, when "writer" content is sent to the user
+		writter.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(writter).Encode(response)
+		// When code reaches here, when "writter" content is sent to the user
 	}
 }

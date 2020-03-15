@@ -6,11 +6,13 @@ import (
 	"net/http"
 )
 
+const port = ":5000"
+
 func main() {
 	Utils.InitDialogFlow()
 
 	// Creation of Server listener for requests
 	http.HandleFunc("/", Utils.RequestHandler)
-	fmt.Println("Started listening...")
-	http.ListenAndServe(":5000", nil)
+	fmt.Println("Server started. Listeting to port " + port)
+	http.ListenAndServe(port, nil)
 }
