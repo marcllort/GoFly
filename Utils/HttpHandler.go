@@ -13,7 +13,7 @@ var dp Model.DialogflowProcessor
 
 func InitDialogFlow() {
 	// Initialization of dialogFlow processor, with the basic info
-	dp.Init("flightbot-9a1fc", "credentials.json", "en", "Europe/Madrid")
+	_ = dp.Init("flightbot-9a1fc", "credentials.json", "en", "Europe/Madrid")
 }
 
 func RequestHandler(writter http.ResponseWriter, request *http.Request) {
@@ -41,7 +41,7 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 
 		// Prepare the JSON to return
 		writter.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(writter).Encode(response)
+		_ = json.NewEncoder(writter).Encode(response)
 		// When code reaches here, when "writter" content is sent to the user
 	}
 }

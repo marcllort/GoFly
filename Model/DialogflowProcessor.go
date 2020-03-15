@@ -70,7 +70,7 @@ func (dp *DialogflowProcessor) ProcessNLP(rawMessage string, username string) (n
 	// Save on response the Intent, Confidence of our response and response message
 	if queryResult.Intent != nil {
 		nlpResponse.Intent = queryResult.Intent.DisplayName
-		nlpResponse.Confidence = float32(queryResult.IntentDetectionConfidence)
+		nlpResponse.Confidence = queryResult.IntentDetectionConfidence
 		nlpResponse.ResponseMessage = queryResult.FulfillmentText
 	}
 
