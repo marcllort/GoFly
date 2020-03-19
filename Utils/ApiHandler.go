@@ -25,11 +25,8 @@ func RequestAPI(place string) Model.PlacesResponse {
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 
-	fmt.Println(string(body))
-
 	var result Model.PlacesResponse
 	json.Unmarshal(body, &result)
-	//fmt.Println(result.Results[0].Name)
 
 	return result
 }

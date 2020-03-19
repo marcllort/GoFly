@@ -49,7 +49,13 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 		Log(l, response)
 
 		// Call to API if searching for places
-		if strings.Contains(response.ResponseMessage, "+") {
+		if strings.Contains(response.ResponseMessage, "cities") {
+			place = RequestAPI(response.ResponseMessage)
+			rand.Seed(time.Now().UnixNano())
+			resultNumber = rand.Intn(5)
+			apiResponse := "You could like " + place.Results[resultNumber].Name + ". Ask me for places to visit there!"
+			response.ResponseMessage = apiResponse
+		} else if strings.Contains(response.ResponseMessage, "+") {
 			place = RequestAPI(response.ResponseMessage)
 			rand.Seed(time.Now().UnixNano())
 			resultNumber = rand.Intn(5)
