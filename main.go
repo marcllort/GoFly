@@ -15,4 +15,5 @@ func main() {
 	http.HandleFunc("/", Utils.RequestHandler)
 	fmt.Println("Server started. Listeting to port " + port)
 	http.ListenAndServe(port, nil)
+
 }

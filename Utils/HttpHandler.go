@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var dp Model.DialogflowProcessor
@@ -38,6 +39,12 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 		// Logging the response
 		l := log.New(os.Stdout, "", 0)
 		Log(l, response)
+
+		// Call to API if searching for places
+		if strings.Contains(response.ResponseMessage, "places") || strings.Contains(response.ResponseMessage, "cities") {
+			apiResponse := RequestAPI(response.ResponseMessage)
+			response.ResponseMessage = apiResponse
+		}
 
 		// Prepare the JSON to return
 		writter.Header().Set("Content-Type", "application/json")
