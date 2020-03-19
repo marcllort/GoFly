@@ -10,7 +10,7 @@ import (
 
 const APIKEY = "AIzaSyDk6ATVIpo6S_VlgXh1subtfBXVrRmK7jU"
 
-func RequestAPI(place string) string {
+func RequestAPI(place string) Model.PlacesResponse {
 
 	url := "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + place + "&key=" + APIKEY
 	method := "POST"
@@ -31,5 +31,5 @@ func RequestAPI(place string) string {
 	json.Unmarshal(body, &result)
 	//fmt.Println(result.Results[0].Name)
 
-	return result.Results[0].Name
+	return result
 }

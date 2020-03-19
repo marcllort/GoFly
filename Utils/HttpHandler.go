@@ -3,14 +3,19 @@ package Utils
 import (
 	"GoFly/Model"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 var dp Model.DialogflowProcessor
+var resultNumber int
+var place Model.PlacesResponse
 
 func InitDialogFlow() {
 	// Initialization of dialogFlow processor, with the basic info
@@ -41,8 +46,22 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 		Log(l, response)
 
 		// Call to API if searching for places
-		if strings.Contains(response.ResponseMessage, "places") || strings.Contains(response.ResponseMessage, "cities") {
-			apiResponse := RequestAPI(response.ResponseMessage)
+		if strings.Contains(response.ResponseMessage, "+") {
+			place = RequestAPI(response.ResponseMessage)
+			rand.Seed(time.Now().UnixNano())
+			resultNumber = rand.Intn(5)
+			apiResponse := place.Results[resultNumber].Name + " -- Do you want more information?"
+			response.ResponseMessage = apiResponse
+		} else if strings.Contains(response.ResponseMessage, "yes") {
+			rating := fmt.Sprintf("%.1f", place.Results[resultNumber].Rating)
+			response.ResponseMessage = "Direction: " + place.Results[resultNumber].FormattedAddress + " -- Rating: " + rating
+		} else if strings.Contains(response.ResponseMessage, "no") {
+			if len(place.Results) == resultNumber {
+				resultNumber = 0
+			} else {
+				resultNumber++
+			}
+			apiResponse := "Maybe you like this one more! " + place.Results[resultNumber].Name + " -- Do you want more information?"
 			response.ResponseMessage = apiResponse
 		}
 
