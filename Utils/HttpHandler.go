@@ -41,8 +41,11 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 		// Pass message to DialogFlow to process the input
 		response := dp.ProcessNLP(m.Message, m.User)
 
-		// Logging the response
+		// Logging the request message
 		l := log.New(os.Stdout, "", 0)
+		LogString(l, m.Message)
+
+		// Logging the response
 		Log(l, response)
 
 		// Call to API if searching for places
