@@ -1,5 +1,7 @@
 # GoFly
 
+GoFly is a chatbot designed to answer and suggest your travel questions. It can recommend cities, and places in them to visit (parks, restaurants, hotels, public attractions...). You can ask the bot for more information of the recommendation, and even see a history of the places it recommended before.
+
 Installation
 
 1. Download latest version of Go (https://golang.org/)
@@ -11,8 +13,8 @@ To try it out, you can use the GoFly app or Postman. Both should connect to loca
 The structure of the message body is:
 
 {
-	"User":"your_username",
-	"Message":"your_request_message"
+    "User":"your_username",
+    "Message":"your_request_message"
 }
 
 GoFly app can be found here: https://github.com/alexalmansa/fligthbot-app
