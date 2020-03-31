@@ -16,4 +16,5 @@ The structure of the message body is:
 }
 
 GoFly app can be found here: https://github.com/alexalmansa/fligthbot-app
+
 To be able to use the app, use it with android studio emulator, or ask me to open the server, where I have public IP and open ports for the app.
