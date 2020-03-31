@@ -58,6 +58,19 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 			}
 			fmt.Println(apiResponse)
 			response.ResponseMessage = apiResponse
+		} else if strings.Contains(response.Intent, "Open") {
+			place = RequestAPI(response.ResponseMessage)
+			var apiResponse string
+			if len(place.Results) != 0 {
+				if place.Results[0].OpeningHours.OpenNow {
+					apiResponse = place.Results[0].Name + " is open!"
+				} else {
+					apiResponse = place.Results[0].Name + " is closed!"
+				}
+			} else {
+				apiResponse = "Which place is the one you are looking for?"
+			}
+			response.ResponseMessage = apiResponse
 		} else if strings.Contains(response.ResponseMessage, "cities") {
 			place = RequestAPI(response.ResponseMessage)
 			rand.Seed(time.Now().UnixNano())
