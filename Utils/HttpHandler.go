@@ -16,6 +16,7 @@ import (
 var dp Model.DialogflowProcessor
 var resultNumber int
 var place Model.PlacesResponse
+var historic []string
 
 func InitDialogFlow() {
 	// Initialization of dialogFlow processor, with the basic info
@@ -49,7 +50,15 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 		Log(l, response)
 
 		// Call to API if searching for places
-		if strings.Contains(response.ResponseMessage, "cities") {
+		if strings.Contains(m.Message, "historic") {
+			apiResponse := "Here are your last searches!"
+			for i := range historic {
+				content := fmt.Sprintf("Historic %d: %s", i, historic[i])
+				apiResponse = apiResponse + "\n" + content
+			}
+			fmt.Println(apiResponse)
+			response.ResponseMessage = apiResponse
+		} else if strings.Contains(response.ResponseMessage, "cities") {
 			place = RequestAPI(response.ResponseMessage)
 			rand.Seed(time.Now().UnixNano())
 			resultNumber = rand.Intn(5)
@@ -64,6 +73,8 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 		} else if strings.Contains(response.ResponseMessage, "yes") {
 			rating := fmt.Sprintf("%.1f", place.Results[resultNumber].Rating)
 			response.ResponseMessage = "Direction: " + place.Results[resultNumber].FormattedAddress + " -- Rating: " + rating
+			// Save the search on historic table
+			historic = append(historic, response.ResponseMessage)
 		} else if strings.Contains(response.ResponseMessage, "no") {
 			if len(place.Results) == resultNumber {
 				resultNumber = 0
