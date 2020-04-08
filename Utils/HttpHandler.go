@@ -60,6 +60,7 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 			fmt.Println(apiResponse)
 			response.ResponseMessage = apiResponse
 		} else if strings.Contains(response.Intent, "Open") {
+			place = RequestAPI(response.ResponseMessage)
 			placeDetailed = RequestDetails(place.Results[0].PlaceID)
 			var apiResponse string
 			if len(place.Results) != 0 {
@@ -68,26 +69,44 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 				} else {
 					apiResponse = place.Results[0].Name + " is closed!"
 				}
+				historic = append(historic, response.ResponseMessage)
 			} else {
 				apiResponse = "Which place is the one you are looking for?"
 			}
 			response.ResponseMessage = apiResponse
-		} else if strings.Contains(response.Intent, "web") {
+		} else if strings.Contains(response.Intent, "Web") {
+			place = RequestAPI(response.ResponseMessage)
 			placeDetailed = RequestDetails(place.Results[0].PlaceID)
 			var apiResponse string
 			if len(place.Results) != 0 {
 				apiResponse = "The website is: " + placeDetailed.Result.Website
+				historic = append(historic, response.ResponseMessage)
 			} else {
 				apiResponse = "Which place is the one you are looking for?"
 			}
 			response.ResponseMessage = apiResponse
-		} else if strings.Contains(response.Intent, "reviews") {
+		} else if strings.Contains(response.Intent, "Review") {
+			place = RequestAPI(response.ResponseMessage)
 			placeDetailed = RequestDetails(place.Results[0].PlaceID)
 			var apiResponse string
 			rand.Seed(time.Now().UnixNano())
 			resultNumber = rand.Intn(len(placeDetailed.Result.Reviews))
 			if len(place.Results) != 0 {
 				apiResponse = "Here you have a review: " + placeDetailed.Result.Reviews[resultNumber].Text
+				historic = append(historic, response.ResponseMessage)
+			} else {
+				apiResponse = "Which place is the one you are looking for?"
+			}
+			response.ResponseMessage = apiResponse
+		} else if strings.Contains(response.Intent, "Phone") {
+			place = RequestAPI(response.ResponseMessage)
+			placeDetailed = RequestDetails(place.Results[0].PlaceID)
+			var apiResponse string
+			rand.Seed(time.Now().UnixNano())
+			resultNumber = rand.Intn(len(placeDetailed.Result.Reviews))
+			if len(place.Results) != 0 {
+				apiResponse = "Here is the phone number: " + placeDetailed.Result.FormattedPhoneNumber
+				historic = append(historic, response.ResponseMessage)
 			} else {
 				apiResponse = "Which place is the one you are looking for?"
 			}

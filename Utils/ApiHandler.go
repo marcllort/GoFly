@@ -12,6 +12,7 @@ import (
 const APIKEY = "AIzaSyDk6ATVIpo6S_VlgXh1subtfBXVrRmK7jU"
 
 func RequestAPI(place string) Model.PlacesResponse {
+
 	placeModified := strings.ReplaceAll(place, " ", "+")
 	url := "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + placeModified + "&key=" + APIKEY
 	method := "POST"
