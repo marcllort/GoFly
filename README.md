@@ -6,7 +6,9 @@ Installation
 
 1. Download latest version of Go (https://golang.org/)
 2. Clone the project to your local
-3. In terminal/cmd, go to the folder of the project, and run: GoFly.exe
+3. In terminal/cmd, go to the folder of the project, and run: 
+    - chmod +x ./GoFlyV2.exe
+    - go run ./GoFlyV2.exe
 
 To try it out, you can use the GoFly app or Postman. Both should connect to localhost:4444
 
