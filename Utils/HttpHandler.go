@@ -16,6 +16,7 @@ import (
 var dp Model.DialogflowProcessor
 var resultNumber int
 var place Model.PlacesResponse
+var placeDetailed Model.DetailedPlaceResponse
 var historic []string
 
 func InitDialogFlow() {
@@ -59,14 +60,34 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 			fmt.Println(apiResponse)
 			response.ResponseMessage = apiResponse
 		} else if strings.Contains(response.Intent, "Open") {
-			place = RequestAPI(response.ResponseMessage)
+			placeDetailed = RequestDetails(place.Results[0].PlaceID)
 			var apiResponse string
 			if len(place.Results) != 0 {
-				if place.Results[0].OpeningHours.OpenNow {
+				if !placeDetailed.Result.PermanentlyClosed {
 					apiResponse = place.Results[0].Name + " is open!"
 				} else {
 					apiResponse = place.Results[0].Name + " is closed!"
 				}
+			} else {
+				apiResponse = "Which place is the one you are looking for?"
+			}
+			response.ResponseMessage = apiResponse
+		} else if strings.Contains(response.Intent, "web") {
+			placeDetailed = RequestDetails(place.Results[0].PlaceID)
+			var apiResponse string
+			if len(place.Results) != 0 {
+				apiResponse = "The website is: " + placeDetailed.Result.Website
+			} else {
+				apiResponse = "Which place is the one you are looking for?"
+			}
+			response.ResponseMessage = apiResponse
+		} else if strings.Contains(response.Intent, "reviews") {
+			placeDetailed = RequestDetails(place.Results[0].PlaceID)
+			var apiResponse string
+			rand.Seed(time.Now().UnixNano())
+			resultNumber = rand.Intn(len(placeDetailed.Result.Reviews))
+			if len(place.Results) != 0 {
+				apiResponse = "Here you have a review: " + placeDetailed.Result.Reviews[resultNumber].Text
 			} else {
 				apiResponse = "Which place is the one you are looking for?"
 			}
@@ -86,6 +107,7 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 		} else if strings.Contains(response.ResponseMessage, "yes") {
 			rating := fmt.Sprintf("%.1f", place.Results[resultNumber].Rating)
 			response.ResponseMessage = "Direction: " + place.Results[resultNumber].FormattedAddress + " -- Rating: " + rating
+			placeDetailed = RequestDetails(place.Results[resultNumber].PlaceID)
 			// Save the search on historic table
 			historic = append(historic, response.ResponseMessage)
 		} else if strings.Contains(response.ResponseMessage, "no") {
