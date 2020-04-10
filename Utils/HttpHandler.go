@@ -105,13 +105,13 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 
 			if len(place.Results) != 0 {
 				rating := fmt.Sprintf("%.1f", place.Results[0].Rating)
-				response.ResponseMessage = place.Results[0].Name + " info -- Direction: " + place.Results[0].FormattedAddress + " -- Rating: " + rating
+				apiResponse = place.Results[0].Name + " info -- Direction: " + place.Results[0].FormattedAddress + " -- Rating: " + rating
 				historic = append(historic, response.ResponseMessage)
 			} else {
 				apiResponse = "Which place is the one you are looking for?"
 			}
 			response.ResponseMessage = apiResponse
-		} else if strings.Contains(response.Intent, "Address") || strings.Contains(response.Intent, "Arribe") {
+		} else if strings.Contains(response.Intent, "address") || strings.Contains(response.Intent, "arribe") {
 			place = RequestAPI(response.ResponseMessage)
 			placeDetailed = RequestDetails(place.Results[0].PlaceID)
 			var apiResponse string
