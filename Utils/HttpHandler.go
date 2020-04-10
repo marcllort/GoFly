@@ -102,7 +102,6 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 			place = RequestAPI(response.ResponseMessage)
 			placeDetailed = RequestDetails(place.Results[0].PlaceID)
 			var apiResponse string
-
 			if len(place.Results) != 0 {
 				rating := fmt.Sprintf("%.1f", place.Results[0].Rating)
 				apiResponse = place.Results[0].Name + " info -- Direction: " + place.Results[0].FormattedAddress + " -- Rating: " + rating
