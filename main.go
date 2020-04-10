@@ -13,7 +13,7 @@ func main() {
 
 	// Creation of Server listener for requests
 	http.HandleFunc("/", Utils.RequestHandler)
-	fmt.Println("Server started. Listeting to port " + port)
+	fmt.Println("Server started. Listening to port " + port)
 	http.ListenAndServe(port, nil)
 
 }
