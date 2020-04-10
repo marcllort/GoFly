@@ -111,13 +111,13 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 				apiResponse = "Which place is the one you are looking for?"
 			}
 			response.ResponseMessage = apiResponse
-		} else if strings.Contains(response.Intent, "Address") {
+		} else if strings.Contains(response.Intent, "Address") || strings.Contains(response.Intent, "Arribe") {
 			place = RequestAPI(response.ResponseMessage)
 			placeDetailed = RequestDetails(place.Results[0].PlaceID)
 			var apiResponse string
 
 			if len(place.Results) != 0 {
-				apiResponse = "The address is: " + placeDetailed.Result.FormattedAddress
+				apiResponse = placeDetailed.Result.FormattedAddress
 				historic = append(historic, response.ResponseMessage)
 			} else {
 				apiResponse = "Which place is the one you are looking for?"
