@@ -62,6 +62,7 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 			}
 			fmt.Println(apiResponse)
 			response.ResponseMessage = apiResponse
+
 		} else if strings.Contains(response.Intent, "Open") {
 
 			if response.ResponseMessage != EMPTY {
