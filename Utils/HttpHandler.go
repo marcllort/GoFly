@@ -28,6 +28,7 @@ func InitDialogFlow() {
 
 func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 	if request.Method == "POST" {
+
 		//POST will receive a JSON, and return the response (as JSON)
 		body, err := ioutil.ReadAll(request.Body)
 		if err != nil {
