@@ -23,4 +23,4 @@ GoFly app can be found here: https://github.com/alexalmansa/fligthbot-app
 
 To be able to use the app, use it with android studio emulator, or ask me to open the server, where I have public IP and open ports for the app.
 
-For a more detailed explanation of how the chatbot is built, and its capabilities, refer to "info.pdf".
+For a more detailed explanation of how the chatbot is built, and its capabilities, refer to "info.pdf" (Automatic translation from catalan to english, you will probably find many translation errors).
