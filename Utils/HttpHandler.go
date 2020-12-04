@@ -156,8 +156,11 @@ func RequestHandler(writter http.ResponseWriter, request *http.Request) {
 			resultNumber = rand.Intn(5)
 			apiResponse := "You could like " + place.Results[resultNumber].Name + ". Ask me for places to visit there!"
 			response.ResponseMessage = apiResponse
-		} else if strings.Contains(response.ResponseMessage, "+") {
-			place = RequestAPI(response.ResponseMessage)
+		} else if strings.Contains(response.Intent, "travel to city") {
+			if response.ResponseMessage != "Could you tell me which city?" {
+				place = RequestAPI(response.ResponseMessage)
+				placeDetailed = RequestDetails(place.Results[0].PlaceID)
+			}
 			rand.Seed(time.Now().UnixNano())
 			resultNumber = rand.Intn(5)
 			apiResponse := place.Results[resultNumber].Name + " -- Do you want more information?"
