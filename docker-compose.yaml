@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  business-handler:
+    container_name: gofly-backend
+    image: "docker.pkg.github.com/marcllort/gofly/gofly_backend"
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
